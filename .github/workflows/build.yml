@@ -85,7 +85,7 @@ jobs:
         make wallet_api -j3
 
   test-ubuntu:
-    needs: build-ubuntu
+#    needs: build-ubuntu
     runs-on: ubuntu-latest
     env:
       CCACHE_TEMPDIR: /tmp/.ccache-temp
