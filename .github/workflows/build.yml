@@ -28,34 +28,34 @@ jobs:
 # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
 #let's check actions 
 
-  build-ubuntu:
-    runs-on: ${{ matrix.os }}
-    env:
-      CCACHE_TEMPDIR: /tmp/.ccache-temp
-    strategy:
-      matrix:
-        os: [ubuntu-latest, ubuntu-18.04]
-    steps:
-    - uses: actions/checkout@v1
-      with:
-        submodules: recursive
-    - uses: actions/cache@v2
-      with:
-        path: ~/.ccache
-        key: ccache-${{ runner.os }}-build-${{ matrix.os }}-${{ github.sha }}
-        restore-keys: ccache-${{ runner.os }}-build-${{ matrix.os }}
-    - name: remove bundled boost
-      run: ${{env.REMOVE_BUNDLED_BOOST}}
-    - name: set apt conf
-      run: ${{env.APT_SET_CONF}}
-    - name: update apt
-      run: sudo apt update
-    - name: install monero dependencies
-      run: ${{env.APT_INSTALL_LINUX}}
-    - name: build
-      run: |
-        ${{env.CCACHE_SETTINGS}}
-        ${{env.BUILD_DEFAULT_LINUX}}
+  # build-ubuntu:
+  #   runs-on: ${{ matrix.os }}
+  #   env:
+  #     CCACHE_TEMPDIR: /tmp/.ccache-temp
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest, ubuntu-18.04]
+  #   steps:
+  #   - uses: actions/checkout@v1
+  #     with:
+  #       submodules: recursive
+  #   - uses: actions/cache@v2
+  #     with:
+  #       path: ~/.ccache
+  #       key: ccache-${{ runner.os }}-build-${{ matrix.os }}-${{ github.sha }}
+  #       restore-keys: ccache-${{ runner.os }}-build-${{ matrix.os }}
+  #   - name: remove bundled boost
+  #     run: ${{env.REMOVE_BUNDLED_BOOST}}
+  #   - name: set apt conf
+  #     run: ${{env.APT_SET_CONF}}
+  #   - name: update apt
+  #     run: sudo apt update
+  #   - name: install monero dependencies
+  #     run: ${{env.APT_INSTALL_LINUX}}
+  #   - name: build
+  #     run: |
+  #       ${{env.CCACHE_SETTINGS}}
+  #       ${{env.BUILD_DEFAULT_LINUX}}
 
   libwallet-ubuntu:
     runs-on: ubuntu-latest
@@ -124,27 +124,27 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: code-coverage-report
-        path: /debug
+        path: home/runner/work/monero/monero/debug
 
  
 
 # ARCH="default" (not "native") ensures, that a different execution host can execute binaries compiled elsewhere.
 # BUILD_SHARED_LIBS=ON speeds up the linkage part a bit, reduces size, and is the only place where the dynamic linkage is tested.
 
-  source-archive:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v1
-      with:
-        submodules: recursive
-    - name: archive
-      run: |
-        pip install git-archive-all
-        export VERSION="monero-$(git describe)"
-        export OUTPUT="$VERSION.tar"
-        echo "OUTPUT=$OUTPUT" >> $GITHUB_ENV
-        /home/runner/.local/bin/git-archive-all --prefix "$VERSION/" --force-submodules "$OUTPUT"
-    - uses: actions/upload-artifact@v2
-      with:
-        name: ${{ env.OUTPUT }}
-        path: /home/runner/work/monero/monero/${{ env.OUTPUT }}
+  # source-archive:
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #   - uses: actions/checkout@v1
+  #     with:
+  #       submodules: recursive
+  #   - name: archive
+  #     run: |
+  #       pip install git-archive-all
+  #       export VERSION="monero-$(git describe)"
+  #       export OUTPUT="$VERSION.tar"
+  #       echo "OUTPUT=$OUTPUT" >> $GITHUB_ENV
+  #       /home/runner/.local/bin/git-archive-all --prefix "$VERSION/" --force-submodules "$OUTPUT"
+  #   - uses: actions/upload-artifact@v2
+  #     with:
+  #       name: ${{ env.OUTPUT }}
+  #       path: /home/runner/work/monero/monero/${{ env.OUTPUT }}
